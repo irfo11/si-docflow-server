@@ -14,6 +14,8 @@ import {
     ProcessingRuleDestination,
 } from '../config/db.js';
 
+import os from 'os';
+
 interface DocumentWithMetadataRequest extends Request {
     file?: Express.Multer.File;
     body: {
@@ -98,6 +100,14 @@ export class DocumentController {
 
             const ocrEngines: string[] = engines.toString().split(',');
             const results = [];
+
+            const totalMem = os.totalmem() / 1024 / 1024;
+            const freeMem = os.freemem() / 1024 / 1024;
+            const usedMem = totalMem - freeMem;
+
+            console.log(`Total mem: ${totalMem}`);
+            console.log(`Free mem: ${freeMem}`);
+            console.log(`Used mem: ${usedMem}`);
 
             for (const ocrEngine of ocrEngines) {
                 const result = await this.ocrService.runOcr(preprocessedDocument, fields, ocrEngine, lang.toString());

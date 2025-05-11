@@ -9,6 +9,7 @@ import { join } from 'path';
 // import fs from 'fs';
 // <- debug
 import { AI_MODEL_NAME, ROOT } from '../config/env.js';
+import os from 'os';
 
 export class DocumentPreprocessorService {
     private readonly pdfMimeTypes: string[] = ['application/pdf'];
@@ -251,6 +252,14 @@ export class DocumentPreprocessorService {
         const metadata = await sharp(photo).metadata();
         const originalWidth = metadata.width!;
         const originalHeight = metadata.height!;
+
+        const totalMem = os.totalmem() / 1024 / 1024;
+        const freeMem = os.freemem() / 1024 / 1024;
+        const usedMem = totalMem - freeMem;
+
+        console.log(`Total mem: ${totalMem}`);
+        console.log(`Free mem: ${freeMem}`);
+        console.log(`Used mem: ${usedMem}`);
 
         // raw buffer for opencv to work
         photo = await sharp(photo).removeAlpha().png().raw().toBuffer();
